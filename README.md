@@ -1,7 +1,8 @@
 # SB-Discord-Bot-v0.1 (WIP)
 A discord bot made to complement the Minecraft: Bedrock Edition server, NetherGames. Made for my guild SweatyBoi.
 
-Note 1: there is a noticable lack of 'bot' currently; that part is still a work-in-progress. It's more efficient for me to get all of the back-end code in place before working on the bot side of things.
+Note 1: there is a noticable lack of 'bot' currently; that part is still a work-in-progress. It's more efficient for me to get all of the back-end code in place before working on the bot side of things. 
+
 Note 2: the code is quite messy in a lot of places, and I very rarely comment on my code. Still getting better at programming, so please do excuse it.
 
 # Features:
