@@ -1,0 +1,71 @@
+Ok so it's time to actually write out what you want and need this to do.
+
+CURRENT SPOT: [STEP 1]
+
+Advanced bit: start writing stuff to logs and maybe caches
+	- makes it easier to compile program with console
+	- also means it reduces the load on servers, as less requests are pulled
+		(sure it will have to query the cache, but it's still way faster and transaction safe than polling NG's servers every single request.)
+
+Step 1 - grab stats.
+ - this will be a module that has different functions that can pull different things (e.g. all player stats, specific player stat(s))
+ - NO display code, NO functions to do calculations. That will come later.
+
+Step 2 - logic.
+ - here is where the magic happens.
+ - this module will do things that the stats and bot won't.
+ - it will read and write to a database, it will calculate different unavailable stats, and anything else it needs to do.
+
+Step 2.5 - tournaments.
+ - this is a simple script that handles the running of tournaments.
+ - it will simply have to:
+ 	keep track of players that have entered the tournament.
+ 	when the tournament starts, grab relevant stats.
+ 	when the tournament ends, grab relevent stats again and compare.
+ 	calculate points based on stats gained during tournament.
+ 	output said points, either through function returns or through files.
+
+Step 3 - bot.
+ - the juicy part - this is where you have to learn to actually code a bot.
+ - and then of course you have to make it.
+ - The commands it will have are:
+ 	a. Stats commands - these are all to do with just viewing and saving player stats.
+ 	b. Target commands - these allow players to set targets and view their progress.
+ 	c. Tournament commands - these allow moderators to start and manage tournaments.
+ 	d. Miscellaneuos - anything else I come up with that would be relatively easy to implement.
+ 	e. Guild commands - stuff like daily stats, etc. that guilds should keep track of.
+ 	f. should link igns to discord tags
+
+Step 4 - display.
+ - this will be a script (using tkinter) that compiles together the whole program.
+ - will also include a console to talk to the bot.
+
+
+
+LOGS AND CACHING
+ ok so 1st things first: write error messages to logs. that bit should be easy, we just need to write to a log file.
+ so we'll need to:
+  - write a Log class for longevity purposes
+  - the constructor method will need to take the type of message, and optionally the module it came from, so errors can be identified easily.
+  - will need a method to write basic error messages to file
+
+ actually nevermind this isn't a great idea. It's worth just making a singular method that appends to a text file, it's a lot faster and since
+ I want to split logging and caching anyways there's no reason to make a class for something that only takes two functions.
+
+ Done! that was really simple, now onto the next bit.
+
+ next bit - logging updates to the database. this bit's a little more challenging, but it's still the case of just writing a method to write
+ what updated to what table, at what time.
+ - first step, chuck the database commit method into any class that connects to a database. (so do self.commit = db.commit without brackets, 
+ this allows you to call db.commit() through self.commit(). nifty feature)
+ - then each time the database gets changed, simply log what was added.
+
+ Done! Also added was the ability to delete member records from tables, cos that's kind of needed. now on to the last, most complicated bit.
+
+ next bit - caching......... ughhhhh. right so what do i need to do?
+ - well first of all, I've got to store the most recent stat pulls. not too hard, right?
+ - well then, i've got to read from it. Basically this is to save my bot and also ng's servers the load of someone spamming their stats
+ every three seconds. the problem is, i also need to save the timestamp, so i can figure out if it's been long enough to update. I reckon
+ maybe every half an hour or such, since the load shouldn't be that big, and i dont want it to take too long for people.
+
+ so, method to write most recent stat pulls. should be relatively easy, just split files into lines, and add one to it. if the limit is already reached (say 30), then take the most recent 29 and re-write the file.
