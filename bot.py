@@ -251,11 +251,6 @@ async def on_message(message):
 
 		await message.channel.send(content=None, embed=embed)
 
-	elif message.content == "dm-me":
-		user = client.get_user(str(my_id))
-		await message.channel.send(f"Sending message to {my_id}")
-		await user.send(user)
-
 
 
 
