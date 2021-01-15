@@ -1,4 +1,3 @@
-import requests
 import sqlite3 as sql
 from stats import *
 
@@ -47,7 +46,7 @@ class Guild(Player):
 			x = stats(username)
 			if x == False: raise UsernameError(username)
 
-			ign = username.replace(" ", "_").lower()
+			username = username.lower()
 
 			self.cursor.execute("""
 				SELECT memberName FROM {name}
@@ -55,14 +54,14 @@ class Guild(Player):
 
 			results = self.cursor.fetchall()
 			for i in results:
-				if ign in i: raise UsernameError(username, "Player already in guild.")
+				if username in i: raise UsernameError(username, "Player already in guild.")
 
 			x1 = x['extra']['wins']
 			x2 = x['winsData']
 			x3 = self.get_win_rate(x)
 			x4 = self.get_kdr(x)
 
-			params = (ign, x1, "+0", x3, x4, x2['BW'], x2['SW'], x2['TB'])
+			params = (username, x1, "+0", x3, x4, x2['BW'], x2['SW'], x2['TB'])
 
 			self.cursor.execute("""
 			INSERT INTO {name}
@@ -70,7 +69,7 @@ class Guild(Player):
 			""".format(name=self.tbName), params)
 
 			self.commit()
-			logChange(self.tbName, f"Record {ign} has been added.")
+			logChange(self.tbName, f"Record {username} has been added.")
 
 		except UsernameError as error:
 			print(error)
@@ -98,7 +97,7 @@ class Guild(Player):
 			x = stats(ign)
 			if x == False: raise UsernameError(ign)
 
-			ign = ign.replace(" ", "_").lower()
+			ign = ign.lower()
 
 			x1 = x['extra']['wins']
 			x2 = x['winsData']
@@ -189,4 +188,3 @@ class Guild(Player):
 		logChange(self.tbName, f"Record {ign} has been removed.")
 
 
-		

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import json
 
 ## script to handle all errors for the programs.
 class UsernameError(Exception):
@@ -85,6 +86,20 @@ def logChange(table, update):
 		f.close()
 		return True
 
+def logMessage(command, message=""):
+	t = datetime.now().strftime("%d %b %y, %H:%M:%S")
+	with open("log.txt", "a") as f:
+		f.write(f" > {t} - Command '{command}' run. {message}\n")
+		f.close()
+		return True
+
+def logCommand(user, command, message=""):
+	t=datetime.now().strftime("%d %b %y, %H:%M:%S")
+	with open("log.txt", "a") as f:
+		f.write(f" > {t} - User {user} used command {command}.\n > '{message}'\n")
+		f.close()
+		return True
+
 
 ## code to handle writing stats to a cache.
 def cache_stats(item):
@@ -93,15 +108,15 @@ def cache_stats(item):
 	
 	with open("cache.txt", "r+") as f:
 		file = f.readlines()
-		if len(file) < 3:
-			f.write(f"{t};;{item}\n")
+		if len(file) < 15:
+			f.write(f"{t};;{json.dumps(item)}\n")
 			f.close()
 			return True
 
 		f.close()
 
 	with open("cache.txt", "w") as f:
-		file.append(f"{t};;{item}\n")
+		file.append(f"{t};;{json.dumps(item)}\n")
 		for line in file[1:]: f.write(line)
 		f.close()
 		return True
@@ -122,8 +137,8 @@ def read_cache(item):
 		f.close()
 
 	for i in cache:
-		if item in i[1]:
-			if float(i[0]) >= t - 1800: return i[1].strip() # 1800 = 30 minutes * 60 seconds.
+		if f'"name": "{item.lower()}"' in i[1]:
+			if float(i[0]) >= t - 1800: return json.loads(i[1].strip()) # 1800 = 30 * 60. No. of seconds in 30 minutes
 
 	return False
 

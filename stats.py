@@ -20,8 +20,13 @@ def test_connection():
 ## Pulls player's stats from NG servers
 def stats(ign):
 	try: # If successful, returns player's stats as a dictionary.
+		x = read_cache(ign)
+		if x != False: return x # if the player's stats were recently written to the cache, the stats will be pulled from the cache instead of polling NG's servers
+
 		response = requests.get(api_key + f"/players/{ign}/stats")
 		if response.status_code != 200: raise UsernameError(ign)
+
+		cache_stats(response.json())
 		return response.json()
 	except UsernameError as error: # Otherwise, raises a UsernameError
 		print(error) # Should prolly change to outputting to log, this way it'll be easier to do the program bit later
@@ -49,7 +54,8 @@ class Player:
 		test_connection()
 
 		self.username = username
-		self.overall_stats = stats(self.username)
+		self.overall_stats = stats(username)
+
 
 	def check(self):
 		return self.overall_stats == False
@@ -109,5 +115,3 @@ class Player:
 
 
 #_________________________________________________________________________________________________________________________________________________________________
-
-test_connection()
